@@ -1,32 +1,35 @@
 pub mod tgraph {
-    use std::hash::Hash;
     use std::collections::HashMap;
 
-    pub struct Graph<Id, E = (),V = ()> {
-        nodes: HashMap<Id, V>,
-        adjecency_list: HashMap<Id, Vec<(Id, E)>>,
+    //The key in the nodes HashMap is the id of the node that is to be used for refrencing, and the T is the value
+    //The key in the adjacency_list HashMap is the id of the node that is to be used for refrencing, and the Vec<u32> is a vector of the ids the key is connected to
+    pub struct Graph<T> {
+        nodes: HashMap<u32, T>,
+        adjacency_list: HashMap<u32, Vec<u32>>
     }
-
-    impl<Id, E, V> Graph<Id, E, V>
-    where 
-        Id: Eq + Hash + Copy,
-        V: Hash,
-    {
-        pub fn new() -> Graph<Id, E, V> {
-            Graph {
-                nodes: HashMap::new(),
-                adjecency_list: HashMap::new(),
-            }
+    
+    impl<T: Eq + std::hash::Hash + Clone> Graph<T> {
+        pub fn new() -> Graph<T> {
+            Graph { nodes: HashMap::new(), adjacency_list: HashMap::new() }
         }
 
-        pub fn add_node(&mut self, id: Id, value: V) {
+        pub fn add_node(&mut self, id: u32, value: T) {
             self.nodes.insert(id, value);
+            self.adjacency_list.insert(id, Vec::new());
         }
 
-        pub fn add_edge(&mut self, from: Id, to: Id, weight: E) {
-            let to_from = self.adjecency_list.entry(from).or_default();
-            to_from.push((to, weight));
+        pub fn get_node(&self, id: u32) -> Option<&T> {
+            self.nodes.get(&id)
         }
-    }
+
+        pub fn add_edge(&mut self, from: u32, to: u32) {
+            self.adjacency_list.get_mut(&from).unwrap().push(to);
+        }
+
+        pub fn get_adjacency_list(&self) -> &HashMap<u32, Vec<u32>> {
+            &self.adjacency_list
+        }
+    }    
+
 
 }
