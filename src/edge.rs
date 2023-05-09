@@ -1,26 +1,29 @@
 pub mod tedge{
-    
+    use crate::player::player::player;
+    #[derive(Debug)]
     pub struct Edge<T> {
-        from: T,
-        to: T,
-        weight: u32,
+        connected_node: u32,
+        color: T,
+        nmbr_of_trains: u32,
+        owner: player
+        //TODO: Add a field for if its owned by a player
     }
 
     impl <T> Edge<T> {
-        pub fn new(from: T, to: T, weight: u32) -> Edge<T> {
-            Edge { from, to, weight }
+        pub fn new(connected_node: u32, color: T, nmbr_of_trains: u32, owner: player) -> Edge<T> {
+            Edge { connected_node, color, nmbr_of_trains, owner}
         }
 
-        pub fn get_from(&self) -> &T {
-            &self.from
+        pub fn change_connected_node(&mut self, connected_node: u32) {
+            self.connected_node = connected_node;
         }
 
-        pub fn get_to(&self) -> &T {
-            &self.to
+        pub fn change_color(&mut self, color: T) {
+            self.color = color;
         }
 
-        pub fn get_weight(&self) -> u32 {
-            self.weight
+        pub fn change_nmbr_of_trains(&mut self, nmbr_of_trains: u32) {
+            self.nmbr_of_trains = nmbr_of_trains;
         }
     }
 }

@@ -1,12 +1,10 @@
 mod graph;
 mod node;
-use graph::tgraph::Graph;
-use node::tnode::Node;
-
+mod edge;
+mod player;
+mod buildgraph;
+use buildgraph::buildgraph::build_graph;
 
 fn main() {
-    let mut g: Graph<u32> = Graph::new();
-
-  
+    build_graph();
 }
-
