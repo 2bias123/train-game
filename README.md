@@ -1,3 +1,3 @@
-# Ticket To Ride
+# Train Game
 
-Im trying to make a ticket to ride clone in rust
+Im trying to make a clone of a certain train based boardgame
