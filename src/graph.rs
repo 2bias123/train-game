@@ -17,6 +17,8 @@ pub mod tgraph {
             self.nodes.insert(id, value);
         }
 
+        //TODO: This now only inserts the edge into the adjcency list of one of the nodes but i want to insert it into the adjaceny list of both end points
+        //Since i dont care about the direction of the edge
         pub fn add_edge(&mut self, id: u32, edge: E) {
             if self.adjacency_list.contains_key(&id) {
                 self.adjacency_list.get_mut(&id).unwrap().push(edge);
