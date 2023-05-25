@@ -1,42 +1,56 @@
 pub mod tgraph {
     use std::collections::HashMap;
+    use std::collections::HashSet;
 
-    //The key in the nodes HashMap is the id of the node that is to be used for refrencing, and the T is the value
-    //The key in the adjacency_list HashMap is the id of the node that is to be used for refrencing, and the Vec<u32> is a vector of the ids the key is connected to
+
     pub struct Graph<T,E> {
-        nodes: HashMap<u32, T>,
-        adjacency_list: HashMap<u32, Vec<E>>
+        nodes: HashSet<T>,
+        adjacency_list: HashMap<T, Vec<E>>
     }
     
-    impl<T: Eq + std::hash::Hash + Clone, E> Graph<T,E> {
-        pub fn new() -> Graph<T,E> {
-            Graph { nodes: HashMap::new(), adjacency_list: HashMap::new() }
+    impl< T: Eq + std::hash::Hash + Clone, E: Eq + std::hash::Hash + Clone> Graph<T, E> {
+        pub fn new() -> Graph< T, E> {
+            Graph { 
+                nodes: HashSet::new(), 
+                adjacency_list: HashMap::new() }
         }
 
-        pub fn add_node(&mut self, id: u32, value: T) {
-            self.nodes.insert(id, value);
-        }
-
-        //TODO: This now only inserts the edge into the adjcency list of one of the nodes but i want to insert it into the adjaceny list of both end points
-        //Since i dont care about the direction of the edge
-        pub fn add_edge(&mut self, id: u32, edge: E) {
-            if self.adjacency_list.contains_key(&id) {
-                self.adjacency_list.get_mut(&id).unwrap().push(edge);
-            } else {
-                self.adjacency_list.insert(id, vec![edge]);
+        pub fn add_node(&mut self, node: T){
+            if !self.adjacency_list.contains_key(&node)
+            {
+                self.adjacency_list.insert(&node, Vec::new());
+                self.nodes.insert(node);
+            }
+            else {
+                println!("The graph already contains this node");
             }
         }
 
-        pub fn get_node(&self, id: u32) -> Option<&T> {
-            self.nodes.get(&id)
+        pub fn add_edge(&mut self, node1: T, node2: T, edge: E){
+            self.adjacency_list.entry(node1).or_insert_with(Vec::new).push(edge.clone());
+            self.adjacency_list.entry(node2).or_insert_with(Vec::new).push(edge.clone());
         }
 
-        pub fn get_edge(&self, id: u32) -> Option<&Vec<E>> {
-            self.adjacency_list.get(&id)
+        pub fn get_node(&mut self, node: &T) -> &T{
+            match self.nodes.get(node) {
+                Some(n) => n,
+                None => panic!("The node does not exist in the graph")
+            }
+        }
+        
+        pub fn get_neighbors(&mut self, node: &T) -> &Vec<E>{
+            match self.adjacency_list.get(node) {
+                Some(n) => n,
+                None => panic!("The node does not exist in the graph")
+            }
         }
 
-        pub fn get_edges(&self) -> &HashMap<u32, Vec<E>> {
+        pub fn get_nodes(&mut self) -> &HashSet<T>{
+            &self.nodes
+        }
+
+        pub fn get_adjecencylist(&mut self) -> &HashMap<T, Vec<E>>{
             &self.adjacency_list
         }
-    }    
+    }
 }
