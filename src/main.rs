@@ -15,15 +15,10 @@ fn main() {
     let mut g = build_graph();
     let sanfran = Node::new(1,"San Fransisco".to_string());
 
-    println!("{:?}",g.get_neighbors(&sanfran).iter().for_each(|(key,value)|{
-        
-    }
-))
+    let sanfran = Node::new(1,"San Fransisco".to_string());
+    let el_paso = Node::new(6,"El Paso".to_string());
 
-    // let sanfran = Node::new(1,"San Fransisco".to_string());
-    // let la = Node::new(2,"Los Angeles".to_string());
+    let mut afa = djikstras(g, sanfran, el_paso);
 
-    // let mut afa = djikstras(g, sanfran, la);
-
-    // println!("{:?}", afa);
+    println!("{:?}", afa);
 }

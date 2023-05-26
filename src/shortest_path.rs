@@ -53,7 +53,7 @@ Reverse the recorded path to obtain the correct order of nodes from the source t
         }
     }
 
-    pub fn djikstras<T: Eq + std::hash::Hash + Clone + std::fmt::Debug>(mut g: Graph<T>,src: T, dest: T) {
+    pub fn djikstras<T: Eq + std::hash::Hash + Clone + std::fmt::Debug>(mut g: Graph<T>,src: T, dest: T) -> Vec<T> {
         let mut distancemap: HashMap<T, usize> = HashMap::new();
         //Initialize all distances to infinity
         g.get_nodes_iterator().for_each(|node| {
@@ -75,6 +75,7 @@ Reverse the recorded path to obtain the correct order of nodes from the source t
                 Some(top_node) => top_node.0.1,
                 None => panic!("Something went wrong")
             };
+
             if !(current_node == dest) {
                 g.get_neighbors(&current_node).iter().for_each(|(key,value)|{
                     let tentative_distance = if distancemap[key] == std::usize::MAX{
@@ -88,15 +89,25 @@ Reverse the recorded path to obtain the correct order of nodes from the source t
                             Some(val) => *val = tentative_distance,
                             None => panic!("Key not found"),
                         }
-                        match previous_node_in_the_shortest_path.get_mut(&current_node) {
-                            Some(previous_shortest) => *previous_shortest = key,
-                            None => todo!(),
+                        match previous_node_in_the_shortest_path.get_mut(key) {
+                            Some(val) => *val = current_node.clone(),
+                            None => {
+                                previous_node_in_the_shortest_path.insert(key.clone(), current_node.clone());
+                            }
                         }
+                        priority_queue.push(Reverse(Wrapper(tentative_distance, key.clone())));
                     }
-                    
-
                 });
             }
         }
+        let mut current = dest.clone();
+        let mut path = vec![dest.clone()];
+
+        while !(current == src){
+            let prev = previous_node_in_the_shortest_path[&current].clone();
+            path.push(prev.clone());
+            current = prev;
+        } 
+        path
     }
 }
