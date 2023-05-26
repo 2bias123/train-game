@@ -20,6 +20,7 @@ pub mod tnode{
 
     impl PartialEq for Node{
         fn eq(&self, other: &Node) -> bool {
+            self.id == other.id &&
             self.name == other.name
         }
     }

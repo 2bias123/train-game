@@ -5,19 +5,16 @@ pub mod buildgraph {
     use crate::color_enum::color_enum::Color;
 
 
-    pub fn build_graph() -> Graph<Node, Edge<'static, Node>>{
-        let mut g: Graph<Node,Edge<Node>> = Graph::new();
-
+    pub fn build_graph() -> Graph<Node>{
         let node1 = Node::new(1,"San Fransisco".to_string());
         let node2 = Node::new(2,"Los Angeles".to_string());
-        
-        let edge = Edge::new(&node1,&node2, Color::Black , 3);
 
+        let mut g: Graph<Node> = Graph::new();
 
-        g.add_node(node1);
-        g.add_node(node2);
+        g.add_node(node1.clone());
+        g.add_node(node2.clone());
 
-        g.add_edge(node1, node2, edge);
+        g.add_bidirectional_edge(node1, node2, 3);
 
         g.add_node(Node::new(3,"Las Vegas".to_string()));
         g.add_node(Node::new(4,"Salt Lake City".to_string()));

@@ -1,56 +1,75 @@
 pub mod tgraph {
     use std::collections::HashMap;
-    use std::collections::HashSet;
 
-
-    pub struct Graph<T,E> {
-        nodes: HashSet<T>,
-        adjacency_list: HashMap<T, Vec<E>>
+    //Manus said that i should use a hashmap with the nodes as key, and another hashmap as value. 
+    //The key in the second hashmap is the node that the first key is connected to and the value is the weigth of the edge
+    //The key in the first hashmap has ownership of the original node, and the second hashmap has a clone of the original node. 
+    //Need to redefine the equals method for nodes so that if the id is the same we say that the object is the same.
+    //Use iterator for what its worth
+    pub struct Graph<T> {
+        adj: HashMap<T,HashMap<T,usize>>
     }
-    
-    impl< T: Eq + std::hash::Hash + Clone, E: Eq + std::hash::Hash + Clone> Graph<T, E> {
-        pub fn new() -> Graph< T, E> {
+
+    impl< T: Eq + std::hash::Hash + Clone + std::fmt::Debug> Graph<T> {
+        pub fn new() -> Graph<T> {
             Graph { 
-                nodes: HashSet::new(), 
-                adjacency_list: HashMap::new() }
+                adj: HashMap::<T, HashMap<T, usize>>::new()
+            }
         }
 
         pub fn add_node(&mut self, node: T){
-            if !self.adjacency_list.contains_key(&node)
-            {
-                self.adjacency_list.insert(&node, Vec::new());
-                self.nodes.insert(node);
+            self.adj.insert(node, HashMap::new());
+        }
+
+        //Node1 is the node that is the start node of the edge and node2 is the end node
+        pub fn add_bidirectional_edge(&mut self, node1: T, node2: T, edge_weight: usize){
+            match self.adj.get_mut(&node1) {
+                Some(value) => {
+                    value.insert(node2.clone(), edge_weight);
+                },
+                None => panic!("The node dosent dont exist"),
             }
-            else {
-                println!("The graph already contains this node");
+
+            match self.adj.get_mut(&node2) {
+                Some(value) => {
+                    value.insert(node1, edge_weight);
+                },
+                None => panic!("The node doesn't exist"),
             }
         }
 
-        pub fn add_edge(&mut self, node1: T, node2: T, edge: E){
-            self.adjacency_list.entry(node1).or_insert_with(Vec::new).push(edge.clone());
-            self.adjacency_list.entry(node2).or_insert_with(Vec::new).push(edge.clone());
-        }
-
-        pub fn get_node(&mut self, node: &T) -> &T{
-            match self.nodes.get(node) {
-                Some(n) => n,
-                None => panic!("The node does not exist in the graph")
+        //Gets the key value pair of the given node
+        pub fn get_node(&mut self, node: &T) -> (&T, &HashMap<T, usize>){
+            match self.adj.get_key_value(node) {
+                Some(node) => node,
+                None => panic!("The node dosent exist in the graph"),
             }
         }
         
-        pub fn get_neighbors(&mut self, node: &T) -> &Vec<E>{
-            match self.adjacency_list.get(node) {
-                Some(n) => n,
-                None => panic!("The node does not exist in the graph")
+        //Gets the neighbours of the given node
+        pub fn get_neighbors(&mut self, node: &T) -> &HashMap<T, usize>{
+            match self.adj.get(node) {
+                Some(neighbours) => neighbours,
+                None => panic!("Couldnt get the neighbours of the given node"),
             }
         }
 
-        pub fn get_nodes(&mut self) -> &HashSet<T>{
-            &self.nodes
+        pub fn get_nodes_iterator(&mut self) -> std::collections::hash_map::Keys<T, HashMap<T, usize>> {
+            self.adj.keys()
         }
 
-        pub fn get_adjecencylist(&mut self) -> &HashMap<T, Vec<E>>{
-            &self.adjacency_list
+        pub fn get_adjecencylist(&mut self) -> std::collections::hash_map::Values<T, HashMap<T, usize>> {
+            self.adj.values()
+        }
+
+        pub fn get_graph(&mut self) -> &HashMap<T, HashMap<T, usize>> {
+            &self.adj
+        }
+
+        pub fn print_graph(&mut self){
+            self.get_graph().iter().for_each(|(key,value)| {
+                println!("Node: {:?} Neighbours: {:?}",key,value)
+            })
         }
     }
 }
