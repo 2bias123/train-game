@@ -6,6 +6,7 @@ mod player;
 mod buildgraph;
 mod color_enum;
 mod shortest_path;
+mod test;
 
 use buildgraph::buildgraph::build_graph;
 use shortest_path::short_path::djikstras;

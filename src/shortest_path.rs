@@ -54,7 +54,9 @@ Reverse the recorded path to obtain the correct order of nodes from the source t
     }
 
     pub fn djikstras<T: Eq + std::hash::Hash + Clone + std::fmt::Debug>(mut g: Graph<T>,src: T, dest: T) -> Vec<T> {
+        
         let mut distancemap: HashMap<T, usize> = HashMap::new();
+        
         //Initialize all distances to infinity
         g.get_nodes_iterator().for_each(|node| {
             if node == &src {
@@ -64,19 +66,27 @@ Reverse the recorded path to obtain the correct order of nodes from the source t
             }
         });
 
+        //Initialize the priority queue
         let mut priority_queue: BinaryHeap<Reverse<Wrapper<T>>> = BinaryHeap::new();
+        //Insert the source node into the priority queue with a distance of 0
         priority_queue.push(Reverse(Wrapper(0, src.clone())));
 
+        //Initialize the previous node hashmap wich is used to store the closest node to each node in the shortest path
         let mut previous_node_in_the_shortest_path: HashMap<T, T> = HashMap::new();
 
+        //This while loop runs as long as the 
         while !priority_queue.is_empty() {
+
+            //This is the node with the shortest distance from the source node
             let mut current_node =
             match priority_queue.pop() {
                 Some(top_node) => top_node.0.1,
                 None => panic!("Something went wrong")
             };
 
-            if !(current_node == dest) {
+            //If the current node is the destination node, we can exit the loop
+            if current_node != dest {
+                //Iterate over the neighbors of the current node and update the distance hashmap and the previous node hashmap
                 g.get_neighbors(&current_node).iter().for_each(|(key,value)|{
                     let tentative_distance = if distancemap[key] == std::usize::MAX{
                         *value
@@ -100,6 +110,9 @@ Reverse the recorded path to obtain the correct order of nodes from the source t
                 });
             }
         }
+
+        println!("Prev: {:?}", previous_node_in_the_shortest_path );
+
         let mut current = dest.clone();
         let mut path = vec![dest.clone()];
 
@@ -108,6 +121,8 @@ Reverse the recorded path to obtain the correct order of nodes from the source t
             path.push(prev.clone());
             current = prev;
         } 
+
+        path.reverse();
         path
     }
 }

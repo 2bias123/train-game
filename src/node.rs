@@ -15,6 +15,13 @@ pub mod tnode{
             self.name = name;
         }
 
+        pub fn get_name(&self) -> String {
+            self.name.clone()
+        }
+
+        pub fn get_id(&self) -> u32 {
+            self.id
+        }
 
     }
 
